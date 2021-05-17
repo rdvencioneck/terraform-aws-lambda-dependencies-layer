@@ -19,7 +19,7 @@ exports.handler = async (event, context) => {
   // build
   const dependenciesPath = "/tmp/dep"
   exec(`rm -rf ${dependenciesPath}`);
-  exec(`mkdir ${dependenciesPath} && cp package.json ${dependenciesPath}`, process.cwd());
+  exec(`mkdir ${dependenciesPath} && cp package.json ${dependenciesPath}`);
   process.chdir(dependenciesPath);
   exec("npm install");
 
@@ -48,9 +48,9 @@ exports.handler = async (event, context) => {
       else {
         resolve({
           statusCode: 200,
-          LayerArn: JSON.stringify(data.LayerArn),
-          LayerVersionArn: JSON.stringify(data.LayerVersionArn),
-          Version: JSON.stringify(data.Version)
+          LayerArn: data.LayerArn,
+          LayerVersionArn: data.LayerVersionArn,
+          Version: data.Version
         });
       }
     });
