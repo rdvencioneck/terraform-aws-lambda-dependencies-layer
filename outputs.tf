@@ -1,14 +1,14 @@
 output "layer_arn" {
-  description = "Created lambda Layer ARN"
-  value       = jsondecode(data.aws_lambda_invocation.nodejs_layer_builder.result)["LayerArn"]
+  description = "Created lambda Layer ARN without version"
+  value       = aws_lambda_layer_version.this.layer_arn
 }
 
 output "layer_version_arn" {
   description = "Created lambda Layer ARN with Version"
-  value       = jsondecode(data.aws_lambda_invocation.nodejs_layer_builder.result)["LayerVersionArn"]
+  value       = aws_lambda_layer_version.this.arn
 }
 
 output "layer_version" {
   description = "Created lambda Layer Version"
-  value       = jsondecode(data.aws_lambda_invocation.nodejs_layer_builder.result)["Version"]
+  value       = aws_lambda_layer_version.this.version
 }
