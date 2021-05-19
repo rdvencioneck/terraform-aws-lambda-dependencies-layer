@@ -1,18 +1,22 @@
+locals{
+  update_file = "/tmp/terraform-aws-lambda-dependencies-layer-update"
+}
+
 resource "null_resource" "layer_builder_trigger" {
   triggers = {
     builder_version = module.nodejs_lambda_dependencies_layer_builder.lambda_function_version
   }
 
   provisioner "local-exec" {
-    command = "touch /tmp/update"
+    command = "touch ${local.update_file}"
   }
 }
 
 data "aws_lambda_invocation" "nodejs_layer_builder" {
-  count = fileexists("/tmp/update") ? 1 : 0
   function_name = module.nodejs_lambda_dependencies_layer_builder.lambda_function_name
   input = <<JSON
 {
+  %{ if !fileexists(local.update_file) }"noOps": "true",%{ endif }
   "layerName": "${var.layer_name}",
   "bucket": "${var.s3_bucket_name}",
   "keyPrefix": "${var.s3_key_prefix}",
@@ -31,9 +35,18 @@ resource "null_resource" "layer_builder_untrigger" {
   }
 
   provisioner "local-exec" {
-    command = fileexists("/tmp/update") ? "rm -f /tmp/update" : "echo removed"
+    command = fileexists(local.update_file) ? "rm -f ${local.update_file}" : "echo removed"
   }
 
+  depends_on = [
+    data.aws_lambda_invocation.nodejs_layer_builder,
+  ]
+}
+
+data "aws_s3_bucket_object" "dependencies_zip" {
+  bucket = var.s3_bucket_name
+  key    = "${var.s3_key_prefix}${var.layer_name}.zip"
+  
   depends_on = [
     data.aws_lambda_invocation.nodejs_layer_builder,
   ]
