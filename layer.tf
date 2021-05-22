@@ -10,6 +10,6 @@ resource "aws_lambda_layer_version" "this" {
   s3_key            = "${var.s3_key_prefix}${var.layer_name}.zip"
 
   depends_on = [
-    data.aws_lambda_invocation.nodejs_layer_builder,
+    data.aws_lambda_invocation.layer_builder,
   ]
 }

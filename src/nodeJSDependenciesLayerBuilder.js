@@ -54,7 +54,7 @@ exports.handler = async (event, context) => {
   exec('ls -1 node_modules | awk \'{print "exports."$1" = require(\\"" $1 "\\");"}\' >> index.js', dependenciesPath);
   
   // zip
-  const generatedZip = "/tmp/deps.zip";
+  const generatedZip = "/tmp/layer.zip";
   await new Promise(resolve => {
     const zipfile = new yazl.ZipFile();
     zipfile.outputStream.pipe(fs.createWriteStream(generatedZip)).on("close", resolve);

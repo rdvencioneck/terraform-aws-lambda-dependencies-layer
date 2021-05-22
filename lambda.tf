@@ -1,30 +1,30 @@
-data "archive_file" "nodejs_lambda_dependencies_layer_builder" {
+data "archive_file" "lambda_dependencies_layer_builder" {
   type        = "zip"
   source {
     content  = file(var.dependencies_file)
-    filename = "package.json"
+    filename = basename(var.dependencies_file)
   }
 
   source {
-    content  = file("${path.module}/src/nodeJSDependenciesLayerBuilder.js")
-    filename = "nodeJSDependenciesLayerBuilder.js"
+    content  = length(regexall("python", var.runtime)) > 0 ? file("${path.module}/src/python_dependencies_layer_builder.py") : file("${path.module}/src/nodeJSDependenciesLayerBuilder.js")
+    filename = "builder.%{ if length(regexall("python", var.runtime)) > 0 }py%{ else }js%{ endif }"
   } 
-  output_path = "nodejs_dependencies_layer_builder.zip"
+  output_path = "dependencies_layer_builder.zip"
 }
 
-module "nodejs_lambda_dependencies_layer_builder" {
+module "lambda_dependencies_layer_builder" {
   source = "terraform-aws-modules/lambda/aws"
 
-  function_name = "nodejs_lambda_dependencies_layer_builder"
-  description   = "Function for building NodeJS dependencies and saving in S3"
-  handler       = "nodeJSDependenciesLayerBuilder.handler"
+  function_name = "${var.layer_name}_layer_builder"
+  description   = "Function for building Lambda dependencies and saving in S3"
+  handler       = "builder.handler"
   runtime       = var.runtime
   publish       = true
-  memory_size   = 128
+  memory_size   = var.layer_builder_lambda_memory
   timeout       = 900
 
   create_package         = false
-  local_existing_package = data.archive_file.nodejs_lambda_dependencies_layer_builder.output_path
+  local_existing_package = data.archive_file.lambda_dependencies_layer_builder.output_path
 
   attach_policy_statements = true
   policy_statements = {

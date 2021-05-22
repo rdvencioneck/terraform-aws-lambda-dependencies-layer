@@ -1,10 +1,10 @@
 locals{
-  update_file = "/tmp/terraform-aws-lambda-dependencies-layer-update"
+  update_file = "/tmp/terraform-aws-lambda-${var.layer_name}-dependencies-layer-update"
 }
 
 resource "null_resource" "layer_builder_trigger" {
   triggers = {
-    builder_version = module.nodejs_lambda_dependencies_layer_builder.lambda_function_version
+    builder_version = module.lambda_dependencies_layer_builder.lambda_function_version
   }
 
   provisioner "local-exec" {
@@ -12,8 +12,8 @@ resource "null_resource" "layer_builder_trigger" {
   }
 }
 
-data "aws_lambda_invocation" "nodejs_layer_builder" {
-  function_name = module.nodejs_lambda_dependencies_layer_builder.lambda_function_name
+data "aws_lambda_invocation" "layer_builder" {
+  function_name = module.lambda_dependencies_layer_builder.lambda_function_name
   input = <<JSON
 {
   %{ if !fileexists(local.update_file) }"noOps": "true",%{ endif }
@@ -39,7 +39,7 @@ resource "null_resource" "layer_builder_untrigger" {
   }
 
   depends_on = [
-    data.aws_lambda_invocation.nodejs_layer_builder,
+    data.aws_lambda_invocation.layer_builder,
   ]
 }
 
@@ -48,6 +48,6 @@ data "aws_s3_bucket_object" "dependencies_zip" {
   key    = "${var.s3_key_prefix}${var.layer_name}.zip"
   
   depends_on = [
-    data.aws_lambda_invocation.nodejs_layer_builder,
+    data.aws_lambda_invocation.layer_builder,
   ]
 }

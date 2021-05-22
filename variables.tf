@@ -33,7 +33,7 @@ variable "compatible_runtimes" {
 }
 
 variable "dependencies_file" {
-  description = "File containing the dependency packages"
+  description = "File containing the dependency packages [ 'requirements.txt' | 'Pipfile' | 'Pipfile.lock' | 'package.json' | 'package-lock.json' ]"
   type = string
 }
 
@@ -51,6 +51,12 @@ variable "delete_old_versions" {
   description = "Whether to delete old layer versions while building the current one"
   type        = bool
   default     = false
+}
+
+variable "layer_builder_lambda_memory" {
+  description = "Memory size (MB) for the lambda builder"
+  type        = string
+  default     = "512"
 }
 
 variable "tags" {
