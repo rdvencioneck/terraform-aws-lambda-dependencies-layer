@@ -1,5 +1,5 @@
 data "archive_file" "lambda_dependencies_layer_builder" {
-  type        = "zip"
+  type = "zip"
   source {
     content  = file(var.dependencies_file)
     filename = basename(var.dependencies_file)
@@ -7,8 +7,8 @@ data "archive_file" "lambda_dependencies_layer_builder" {
 
   source {
     content  = length(regexall("python", var.runtime)) > 0 ? file("${path.module}/src/python_dependencies_layer_builder.py") : file("${path.module}/src/nodeJSDependenciesLayerBuilder.js")
-    filename = "builder.%{ if length(regexall("python", var.runtime)) > 0 }py%{ else }js%{ endif }"
-  } 
+    filename = "builder.%{if length(regexall("python", var.runtime)) > 0}py%{else}js%{endif}"
+  }
   output_path = "dependencies_layer_builder.zip"
 }
 

@@ -19,7 +19,7 @@ def handler(event, context):
   layer_name = event["layerName"]
   bucket = event["bucket"]
   key_prefix= event["keyPrefix"]
-  
+
   if event["deleteOld"] == "true":
     keep_deleting = True
     while keep_deleting:

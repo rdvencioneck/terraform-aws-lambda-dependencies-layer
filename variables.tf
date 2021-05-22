@@ -6,18 +6,18 @@ variable "builder" {
 
 variable "layer_name" {
   description = "Unique name for your Lambda Layer"
-  type = string
+  type        = string
 }
 
 variable "layer_description" {
   description = "Layer's description"
-  type = string
-  default = ""
+  type        = string
+  default     = ""
 }
 
 variable "license_info" {
   description = "License info for your Lambda Layer. Eg, MIT or full url of a license."
-  type = string
+  type        = string
   default     = ""
 }
 
@@ -34,7 +34,7 @@ variable "compatible_runtimes" {
 
 variable "dependencies_file" {
   description = "File containing the dependency packages [ 'requirements.txt' | 'Pipfile' | 'Pipfile.lock' | 'package.json' | 'package-lock.json' ]"
-  type = string
+  type        = string
 }
 
 variable "s3_bucket_name" {
